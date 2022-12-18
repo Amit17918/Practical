@@ -1,0 +1,139 @@
+﻿@model Practical.Models.Employee
+@{
+    ViewBag.Title = "Create";
+}
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Launch demo modal
+</button>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone No.</th>
+        <th>Address</th>
+        <th>State</th>
+        <th>City</th>
+    </tr>
+    @for (int i = 0; i < Model.empList.Count; i++)
+    {
+    <tr>
+        <td>@Model.Name</td>
+        <td>@Model.Email</td>
+        <td>@Model.Phone_No</td>
+        <td>@Model.Address</td>
+        <td>@Model.state</td>
+        <td>@Model.city</td>
+    </tr>
+    }
+</table>
+
+@using (Html.BeginForm("EmployeeDetails", "Home", FormMethod.Post,new { @class="my_form" }))
+{
+    @Html.ValidationSummary(true)
+    HtmlHelper.ClientValidationEnabled = true;
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div  class="form-group">
+                        @Html.LabelFor(model => model.Name, new { htmlAttributes = new { @class = "form-label" } })
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes =new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "field-validation-valid text-danger" })
+                    </div>
+                    <div  class="form-group">
+                        @Html.LabelFor(model => model.Email, new { htmlAttributes = new { @class = "form-label" } })
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Email,"", new {  @class = "field-validation-valid text-danger" })
+                    </div>
+                    <div  class="form-group">
+                        @Html.LabelFor(model => model.Phone_No, new { htmlAttributes = new { @class = "form-label" } })
+                        @Html.EditorFor(model => model.Phone_No, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Phone_No, "", new { @class = "field-validation-valid text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Address, new { htmlAttributes = new { @class = "form-label" } })
+                        @Html.TextAreaFor(model => model.Address,  new { @class = "form-control" } )
+                        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "field-validation-valid text-danger" })
+                    </div>                    
+                    <div  class="form-group">
+                        @Html.LabelFor(model => model.stateList)
+                        @Html.DropDownListFor(model=>model.state, Model.stateList,"Select State",new {id="state" ,@class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.stateList)
+                    </div>
+                    <div  class="form-group">
+                        @Html.LabelFor(model => model.cityList, new { htmlAttributes = new { @class = "form-label" } })
+                        @Html.DropDownListFor(model => model.city, Model.cityList, "Select City", new {id="city", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.cityList)  
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Agree, new { htmlAttributes = new { @class = "form-label" } })
+                        @Html.CheckBoxFor(model => model.Agree,new {id= "agree", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Agree, "Please Agree Tearms & Condition", new {id="agreeValidation", @class = "field-validation-valid text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" id="saveBtn" value="Create" onclick="return validateForm()" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+    <script>
+        $(document).ready(function () {
+            //Dropdownlist Selectedchange event
+            $("#state").change(function () {
+                $("#city").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetCity")',
+                    dataType: 'json',
+                    data: { id: $("#state").val() },
+                    success: function (data) {
+                        $.each(data, function (i, member) {
+                            $("#city").append('<option value="'+ member.Value + '">'+ member.Text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        $("#city").append('<option value="">Select City</option>');   
+                    }
+                });
+                return false;
+            })
+            $('#city').change(function () {
+            });
+            $('#agree').click(function () {
+                if ($('#agree').is(':checked')) {
+                    $('#agreeValidation').hide();
+                } else {
+                    $('#agreeValidation').show();
+                }
+            })
+        });
+        function validateForm() {
+            debugger;
+            if ($('#agree').val()) {
+                //true
+                $('#agreeValidation').show();
+            } else {
+                //false
+                $('#agreeValidation').hide();
+                return true;
+            }
+        }
+    </script>
+}
