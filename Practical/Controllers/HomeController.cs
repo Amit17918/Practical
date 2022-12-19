@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using Practical.Models;
+﻿using Practical.Models;
+using Practical.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,13 +11,13 @@ namespace Practical.Controllers
 {
     public class HomeController : Controller
     {
-        List<Employee> empList = new List<Employee>();
+        Database database = new Database();
         public ActionResult Index()
         {
             Employee emp = new Employee();
-            emp.empList=empList;
             emp.stateList.Add(new SelectListItem() { Text = "Gujarat", Value = "1", Selected = false });
                 emp.stateList.Add(new SelectListItem() { Text = "Maharastra", Value = "2", Selected = false });
+            emp.empList=database.GetEmployee();
             return View(emp);
         }
 
@@ -43,14 +43,14 @@ namespace Practical.Controllers
         [HttpPost]
         public ActionResult EmployeeDetails(Employee employee)
         {
-            empList.Add(employee);
-            //if (ModelState.IsValid)
-            //{
-                //return RedirectToAction("Index");
-            //}else
-            //{
-                return View("Index", employee);
-            //}
+            database.UpdaloadData(employee);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public JsonResult GetEmployeeData(String id)
+        {
+            return Json(database.GetEmployeeData(id));
         }
 
         public ActionResult About()

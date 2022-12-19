@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,12 +9,12 @@ namespace Practical.Models
 {
     public class Employee
     {
-        public int id { get; set; }
+        public String id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         public String Name { get; set; }
 
-        [DataType(DataType.EmailAddress) Required(ErrorMessage = "Email is required")]
+        [DataType(DataType.EmailAddress), Required(ErrorMessage = "Email is required")]
         public String Email { get; set; }
 
         [DataType(DataType.PhoneNumber)]
@@ -45,21 +44,6 @@ namespace Practical.Models
             {
                 return value != null && value is bool && (bool)value;
             }
-        }
-    }
-
-    public class Utils
-    {
-        public static List<State> GetState()
-        {
-            String jsonState1 = "{\"Id\":1,\"Name\":\"Gujarat\"}";
-               String jsonState2 = "{\"Id\":2,\"Name\":\"Maharastra\"}";
-
-            List<State> stateList = new List<State>();
-            stateList.Add(JsonConvert.DeserializeObject<State>(jsonState1));
-            stateList.Add(JsonConvert.DeserializeObject<State>(jsonState2));
-
-            return stateList;
         }
     }
 }
